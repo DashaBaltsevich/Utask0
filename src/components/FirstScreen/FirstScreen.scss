@@ -1,0 +1,23 @@
+@import '../../consts.scss';
+.first-screen__nav {
+    background-color: #F06000;
+}
+.l-first-screen {
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    &__item {
+        color: #fff;
+        border: 2px #fff solid;
+        border-radius: 15px;
+        padding: 10px 30px;
+        width: 250px;
+        text-align: center;
+        & +  & {
+            margin-top: 30px;
+        }
+    }
+}

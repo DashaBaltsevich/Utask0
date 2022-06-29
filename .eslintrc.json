@@ -1,0 +1,63 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "jest": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:prettier/recommended",
+    "plugin:import/errors",
+    "prettier",
+    "plugin:@typescript-eslint/recommended",  // Использует рекомендуемые правила из @typescript-eslint/eslint-plugin
+    "prettier/@typescript-eslint",  // Использует eslint-config-prettier для отключения правил ESLint из @typescript-eslint/eslint-plugin, которые будут конфликтовать с prettier
+    "plugin:prettier/recommended"  // Включает eslint-plugin-prettier и отображает более красивые ошибки как ошибки ESLint. Убедитесь, что это всегда последняя конфигурация в массиве extends.
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": ["react", "prettier", "@typescript-eslint"],
+  "rules": {
+    "react-hooks/exhaustive-deps": "off",
+    "react/react-in-jsx-scope": "off",
+    "semi": ["off", "always"],
+    "semi-style": ["error", "last"],
+    "semi-spacing": "error",
+    "no-trailing-spaces": "error",
+    "react/no-children-prop": "off",
+    "react/prop-types": "off",
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "jsxSingleQuote": false,
+        "parser": "flow",
+        "trailingComma": "all",
+        "semi": true,
+        "tabWidth": 2,
+        "bracketSpacing": true,
+        "bracketSameLine": false,
+        "endOfLine": "auto"
+      }
+    ],
+    "import/order": [
+      "error",
+      {
+        "groups": [["builtin", "external"], ["internal"], ["index", "parent", "sibling"]]
+      }
+    ],
+    "import/no-cycle": "error"
+  },
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "detect"
+    }
+  }
+}
