@@ -1,11 +1,9 @@
-import { FirstScreen } from './components';
-import './App.css';
-import React from 'react';
+import { FirstScreen } from "./components";
+import "./App.css";
+import React from "react";
 
-function App () {
-    return (
-        <FirstScreen />
-    )
+function App() {
+  return <FirstScreen />;
 }
 
 export default App;
