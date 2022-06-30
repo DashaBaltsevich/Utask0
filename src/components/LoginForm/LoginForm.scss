@@ -1,0 +1,50 @@
+@import '../../consts.scss';
+.b-login {
+  background-color: $orange-color;
+}
+.f-login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #fff;
+  &__title {
+    font-size: 46px;
+    margin-bottom: 25px;
+  }
+  &__field {
+    background-color: #fff;
+    color: #f06000;
+    width: 230px;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 8px;
+    font-weight: 600;
+    &-error {
+      font-size: 12px;
+      margin-top: 5px;
+      color: rgb(172, 4, 4);
+    }
+  }
+  &__row-links {
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    width: 230px;
+    margin-top: 13px;
+  }
+
+  &__row + &__row {
+    margin-top: 10px;
+  }
+  &__btn-submit {
+    background-color: #f06000;
+    color: #fff;
+    font-size: 18px;
+    padding: 7px 87px;
+    border: 2px #fff solid;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+}

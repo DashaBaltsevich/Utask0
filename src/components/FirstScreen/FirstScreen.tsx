@@ -1,6 +1,6 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import "./FirstScreen.scss";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import './FirstScreen.scss';
 
 export const FirstScreen: React.FC = () => {
   return (
