@@ -10,6 +10,7 @@
     "plugin:react/recommended",
     "plugin:prettier/recommended",
     "plugin:import/errors",
+    "plugin:import/typescript",
     "prettier",
     "plugin:@typescript-eslint/recommended", // Использует рекомендуемые правила из @typescript-eslint/eslint-plugin
     "plugin:prettier/recommended" // Включает eslint-plugin-prettier и отображает более красивые ошибки как ошибки ESLint. Убедитесь, что это всегда последняя конфигурация в массиве extends.
@@ -19,7 +20,8 @@
       "jsx": true
     },
     "ecmaVersion": "latest",
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
   "plugins": ["react", "prettier", "@typescript-eslint"],
   "rules": {

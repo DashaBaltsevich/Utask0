@@ -21,7 +21,7 @@ export const LoginForm = () => {
     console.log(values);
   };
   return (
-    <section className="s-login">
+    <div className="b-login">
       <Formik
         initialValues={{
           email: '',
@@ -89,6 +89,6 @@ export const LoginForm = () => {
           </Form>
         )}
       </Formik>
-    </section>
+    </div>
   );
 };
