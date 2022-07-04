@@ -2,7 +2,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { NavLink } from 'react-router-dom';
 import './LoginForm.scss';
 import * as yup from 'yup';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 const validationSchema = yup.object({
   email: yup
@@ -17,9 +18,15 @@ const validationSchema = yup.object({
 });
 
 export const LoginForm = () => {
+  const userPermission = useSelector(
+    (state) => state.userPermissionReducer.userPermission,
+  );
   const handleFormSubmit = (values: object) => {
     console.log(values);
   };
+  useEffect(() => {
+    console.log(userPermission);
+  });
   return (
     <div className="b-login">
       <Formik
