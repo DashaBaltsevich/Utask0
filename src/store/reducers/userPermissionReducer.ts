@@ -1,8 +1,8 @@
-interface userPermissionState {
+interface userPermissionType {
   userPermission: number;
 }
 
-const initialState: userPermissionState = {
+const initialState: userPermissionType = {
   userPermission: 0,
 };
 

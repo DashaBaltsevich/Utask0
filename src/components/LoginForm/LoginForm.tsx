@@ -2,8 +2,9 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { NavLink } from 'react-router-dom';
 import './LoginForm.scss';
 import * as yup from 'yup';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 const validationSchema = yup.object({
   email: yup
@@ -18,21 +19,20 @@ const validationSchema = yup.object({
 });
 
 export const LoginForm = () => {
-  const userPermission = useSelector(
+  const userPermission = useSelector<RootState, number>(
     (state) => state.userPermissionReducer.userPermission,
   );
   const handleFormSubmit = (values: object) => {
     console.log(values);
   };
-  useEffect(() => {
-    console.log(userPermission);
-  });
+
   return (
     <div className="b-login">
       <Formik
         initialValues={{
           email: '',
           password: '',
+          userPermission: userPermission,
         }}
         validateOnBlur={false}
         validationSchema={validationSchema}
@@ -53,6 +53,7 @@ export const LoginForm = () => {
                 className="f-login__field"
                 value={values.email}
                 placeholder="Почта"
+                autoComplete="on"
               />
               <ErrorMessage
                 name="email"
@@ -71,6 +72,7 @@ export const LoginForm = () => {
                 name="password"
                 className="f-login__field"
                 placeholder="Пароль"
+                autoComplete="current-password"
               />
               <ErrorMessage
                 name="password"
