@@ -3,7 +3,9 @@ import { NavLink } from 'react-router-dom';
 import './LoginForm.scss';
 import * as yup from 'yup';
 import React from 'react';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setUserInformation } from '../../store/actions';
+import { login } from '../../api/facades';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 
 const validationSchema = yup.object({
@@ -11,7 +13,7 @@ const validationSchema = yup.object({
     .string()
     .email('Invalid email address')
     .required('Email is required')
-    .max(30, 'Are you really sure that your email is that big?'),
+    .max(40, 'Are you really sure that your email is that big?'),
   password: yup
     .string()
     .required('Password is required')
@@ -19,23 +21,23 @@ const validationSchema = yup.object({
 });
 
 export const LoginForm: React.FC = () => {
-  const { userPermission } = useTypedSelector(
+  const { permission } = useTypedSelector(
     (state) => state.userInformationReducer,
   );
-  const isStudent: boolean = userPermission === 2 ? true : false;
-  const handleFormSubmit = (values: object) => {
+  const isStudent: boolean = permission === 2 ? true : false;
+  const dispatch = useDispatch();
+
+  const handleFormSubmit = async (values: object) => {
     console.log(values);
-    axios
-      .post(
-        'https://tranquil-temple-28711.herokuapp.com/api/v1/sign-in',
-        values,
-      )
-      .then((response: any) => {
-        console.log(response);
-      })
-      .catch((error: any) => {
-        console.log(error);
-      });
+    try {
+      const data = await login(values);
+      console.log(data);
+      dispatch(setUserInformation(data?.content.user));
+      localStorage.setItem('accessToken', data?.content.token.accessToken);
+      localStorage.setItem('refreshToken', data?.content.token.refreshToken);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

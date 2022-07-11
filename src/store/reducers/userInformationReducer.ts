@@ -1,16 +1,20 @@
-import { ADMIN, SPECIALIST, STUDENT } from '../constants';
+import { ADMIN, SPECIALIST, STUDENT, SET_USER_INFORMATION } from '../constants';
 
 interface UserInformationState {
-  userPermission: number;
+  isAuthorised: boolean;
+  permission: number;
+  userInformation: object;
 }
 
 const initialState: UserInformationState = {
-  userPermission: 0,
+  isAuthorised: false,
+  permission: 0,
+  userInformation: {},
 };
 
 interface UserAction {
   type: string;
-  payload: number;
+  payload: object;
 }
 
 export const userInformationReducer = (
@@ -21,17 +25,22 @@ export const userInformationReducer = (
     case ADMIN:
       return {
         ...state,
-        userPermission: 0,
+        permission: 0,
       };
     case SPECIALIST:
       return {
         ...state,
-        userPermission: 1,
+        permission: 1,
       };
     case STUDENT:
       return {
         ...state,
-        userPermission: 2,
+        permission: 2,
+      };
+    case SET_USER_INFORMATION:
+      return {
+        ...state,
+        userInformation: action.payload,
       };
     default:
       return state;
