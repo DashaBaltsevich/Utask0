@@ -3,29 +3,50 @@ import { NavLink } from 'react-router-dom';
 import './LoginForm.scss';
 import * as yup from 'yup';
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { setUserInformation } from '../../store/actions';
+import { login } from '../../api/facades';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
 
 const validationSchema = yup.object({
   email: yup
     .string()
     .email('Invalid email address')
     .required('Email is required')
-    .max(30, 'Are you really sure that your email is that big?'),
+    .max(40, 'Are you really sure that your email is that big?'),
   password: yup
     .string()
     .required('Password is required')
     .min(4, 'Must be more than 4 characters'),
 });
 
-export const LoginForm = () => {
-  const handleFormSubmit = (values: object) => {
+export const LoginForm: React.FC = () => {
+  const { permission } = useTypedSelector(
+    (state) => state.userInformationReducer,
+  );
+  const isStudent: boolean = permission === 2 ? true : false;
+  const dispatch = useDispatch();
+
+  const handleFormSubmit = async (values: object) => {
     console.log(values);
+    try {
+      const data = await login(values);
+      console.log(data);
+      dispatch(setUserInformation(data?.content.user));
+      localStorage.setItem('accessToken', data?.content.token.accessToken);
+      localStorage.setItem('refreshToken', data?.content.token.refreshToken);
+    } catch (err) {
+      console.log(err);
+    }
   };
+
   return (
     <div className="b-login">
       <Formik
         initialValues={{
           email: '',
           password: '',
+          isStudent: isStudent,
         }}
         validateOnBlur={false}
         validationSchema={validationSchema}

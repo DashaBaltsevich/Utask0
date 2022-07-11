@@ -1,18 +1,30 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setUserPermission } from '../../store/actions';
+import { SPECIALIST, STUDENT } from '../../store/constants';
 import './FirstScreen.scss';
 
 export const FirstScreen: React.FC = () => {
+  const dispatch = useDispatch();
   return (
-    <nav className="first-screen__nav">
-      <ul className="l-first-screen">
-        <li className="l-first-screen__item">
-          <NavLink to="/login">Найти специалиста</NavLink>
-        </li>
-        <li className="l-first-screen__item">
-          <NavLink to="/login">Вход для специалистов</NavLink>
-        </li>
-      </ul>
-    </nav>
+    <div className="b-first-screen">
+      <NavLink to="/login" className="b-first-screen__link">
+        <button
+          className="b-first-screen__btn"
+          onClick={() => dispatch(setUserPermission(SPECIALIST))}
+        >
+          Вход для специалистов
+        </button>
+      </NavLink>
+      <NavLink to="/login" className="b-first-screen__link">
+        <button
+          className="b-first-screen__btn"
+          onClick={() => dispatch(setUserPermission(STUDENT))}
+        >
+          Найти специалиста
+        </button>
+      </NavLink>
+    </div>
   );
 };
