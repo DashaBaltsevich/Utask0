@@ -1,1 +1,1 @@
-export * from './userPermissionReducer';
+export * from './userInformationReducer';

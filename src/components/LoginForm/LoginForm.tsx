@@ -3,8 +3,8 @@ import { NavLink } from 'react-router-dom';
 import './LoginForm.scss';
 import * as yup from 'yup';
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
+import axios from 'axios';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
 
 const validationSchema = yup.object({
   email: yup
@@ -18,12 +18,24 @@ const validationSchema = yup.object({
     .min(4, 'Must be more than 4 characters'),
 });
 
-export const LoginForm = () => {
-  const userPermission = useSelector<RootState, number>(
-    (state) => state.userPermissionReducer.userPermission,
+export const LoginForm: React.FC = () => {
+  const { userPermission } = useTypedSelector(
+    (state) => state.userInformationReducer,
   );
+  const isStudent: boolean = userPermission === 2 ? true : false;
   const handleFormSubmit = (values: object) => {
     console.log(values);
+    axios
+      .post(
+        'https://tranquil-temple-28711.herokuapp.com/api/v1/sign-in',
+        values,
+      )
+      .then((response: any) => {
+        console.log(response);
+      })
+      .catch((error: any) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -32,7 +44,7 @@ export const LoginForm = () => {
         initialValues={{
           email: '',
           password: '',
-          userPermission: userPermission,
+          isStudent: isStudent,
         }}
         validateOnBlur={false}
         validationSchema={validationSchema}
@@ -53,7 +65,6 @@ export const LoginForm = () => {
                 className="f-login__field"
                 value={values.email}
                 placeholder="Почта"
-                autoComplete="on"
               />
               <ErrorMessage
                 name="email"
@@ -72,7 +83,6 @@ export const LoginForm = () => {
                 name="password"
                 className="f-login__field"
                 placeholder="Пароль"
-                autoComplete="current-password"
               />
               <ErrorMessage
                 name="password"

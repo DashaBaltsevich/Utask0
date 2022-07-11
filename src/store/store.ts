@@ -1,9 +1,9 @@
 import { composeWithDevTools } from '@redux-devtools/extension';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { userPermissionReducer } from './reducers';
+import { userInformationReducer } from './reducers';
 
 const rootReducer = combineReducers({
-  userPermissionReducer,
+  userInformationReducer,
 });
 
 export const store = createStore(

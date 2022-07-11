@@ -1,29 +1,34 @@
-interface userPermissionType {
+import { ADMIN, SPECIALIST, STUDENT } from '../constants';
+
+interface UserInformationState {
   userPermission: number;
 }
 
-const initialState: userPermissionType = {
+const initialState: UserInformationState = {
   userPermission: 0,
 };
 
-interface Action {
+interface UserAction {
   type: string;
   payload: number;
 }
 
-export const userPermissionReducer = (state = initialState, action: Action) => {
+export const userInformationReducer = (
+  state = initialState,
+  action: UserAction,
+): UserInformationState => {
   switch (action.type) {
-    case 'ADMIN':
+    case ADMIN:
       return {
         ...state,
         userPermission: 0,
       };
-    case 'SPECIALIST':
+    case SPECIALIST:
       return {
         ...state,
         userPermission: 1,
       };
-    case 'STUDENT':
+    case STUDENT:
       return {
         ...state,
         userPermission: 2,

@@ -2,16 +2,17 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUserPermission } from '../../store/actions';
+import { SPECIALIST, STUDENT } from '../../store/constants';
 import './FirstScreen.scss';
 
-export const FirstScreen = () => {
+export const FirstScreen: React.FC = () => {
   const dispatch = useDispatch();
   return (
     <div className="b-first-screen">
       <NavLink to="/login" className="b-first-screen__link">
         <button
           className="b-first-screen__btn"
-          onClick={() => dispatch(setUserPermission('SPECIALIST'))}
+          onClick={() => dispatch(setUserPermission(SPECIALIST))}
         >
           Вход для специалистов
         </button>
@@ -19,7 +20,7 @@ export const FirstScreen = () => {
       <NavLink to="/login" className="b-first-screen__link">
         <button
           className="b-first-screen__btn"
-          onClick={() => dispatch(setUserPermission('STUDENT'))}
+          onClick={() => dispatch(setUserPermission(STUDENT))}
         >
           Найти специалиста
         </button>
