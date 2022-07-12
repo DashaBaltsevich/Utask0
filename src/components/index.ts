@@ -5,3 +5,4 @@ export * from './AppBar';
 export * from './TabBar';
 export * from './Template';
 export * from './Orders';
+export * from './UserInformationForm';

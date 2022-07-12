@@ -33,7 +33,7 @@ export const LoginForm: React.FC = () => {
       const data = await login(values);
       dispatch(setUserInformation(data?.content.user));
       dispatch(setIsAuthorised(true));
-      navigate('../main', { replace: true });
+      navigate('../userInformation', { replace: true });
       localStorage.setItem('accessToken', data?.content.token.accessToken);
       localStorage.setItem('refreshToken', data?.content.token.refreshToken);
     } catch (err) {

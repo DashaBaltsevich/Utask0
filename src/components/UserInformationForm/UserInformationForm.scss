@@ -1,0 +1,128 @@
+@import '../../consts.scss';
+
+.s-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    padding-bottom: calc(#{$tabbar-height} + 30px);
+    &__title {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+}
+input[type="checkbox"] {
+    display: inline;
+    margin: 0;
+    margin-right: 10px;
+    width: 15px;
+}
+.f-user-info {
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    &__row {
+        & + & {
+            margin-top: 30px;
+        }
+    }
+    &__field {
+        width: 500px;
+        font-size: 16px;
+        padding: 5px;
+        border: 1px solid $orange-color;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        &-title {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        &-label {
+            &-bold {
+                font-weight: bold;
+                font-size: 18px;
+            }
+            &-light {
+                font-size: 14px;
+            }
+        }
+        &.number {
+            width: 100px;
+        }
+        &-wrapp {
+            display: flex;
+            &-inner {
+                & + & {
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+    &__title {
+        text-align: center;
+    }
+    &__btn-submit {
+        align-self: center;
+    }
+}
+
+.l-user-info {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    &__item {
+        padding: 25px;
+        background-color: rgb(255, 255, 255);
+        border: 1px solid rgb(232, 233, 234);
+        border-radius: 20px;
+        & + & {
+            margin-top: 30px;
+        }
+    }
+    &__title {
+        margin-bottom: 10px;
+        display: block;
+        width: 100%;
+        border-bottom: 1px solid $orange-color;
+        &_span {
+            color: $orange-color;
+        }
+    }
+}
+
+.f-user-info__btn-submit, .l-user-info__btn {
+    padding: 5px 10px;
+    margin-top: 30px;
+    border: 1px solid $orange-color;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+@media(max-width: 600px) {
+    .l-user-info {
+        max-width: 350px;
+    }
+    .f-user-info {
+        max-width: 350px;
+        &__field {
+            width: 300px;
+            &.number {
+                width: 80px;
+            }
+        }
+    }
+}
+
+@media(max-width: 479px) {
+    .l-user-info {
+        &__title {
+            font-size: 16px;
+        }
+        &__text {
+            font-size: 14px;
+        }
+    }
+    .f-user-info__field-label-bold {
+        font-size: 16px;
+    }
+}

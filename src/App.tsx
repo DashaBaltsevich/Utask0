@@ -6,6 +6,7 @@ import {
   PrivateRoute,
   Template,
   Orders,
+  UserInformationForm,
 } from './components';
 import { useTypedSelector } from './hooks/useTypedSelector';
 import './App.css';
@@ -22,7 +23,17 @@ function App() {
       <Route path="/" element={<FirstScreen />} />
       <Route path="login" element={<LoginForm />} />
       <Route
-        path="/main"
+        path="/userInformation"
+        element={
+          <PrivateRoute isAllowed={isAuthorised}>
+            <Template>
+              <UserInformationForm />
+            </Template>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/orders"
         element={
           <PrivateRoute isAllowed={isAuthorised}>
             <Template>
