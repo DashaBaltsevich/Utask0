@@ -3,18 +3,13 @@ import { Navigate } from 'react-router-dom';
 
 interface ProtectedRouteProps {
   isAllowed: boolean;
-  redirectPath: string;
   children: JSX.Element;
 }
 
-export const PrivateRoute = ({
-  isAllowed,
-  redirectPath,
-  children,
-}: ProtectedRouteProps) => {
+export const PrivateRoute = ({ isAllowed, children }: ProtectedRouteProps) => {
   if (isAllowed) {
     return children;
   } else {
-    return <Navigate to={redirectPath} replace={true} />;
+    return <Navigate to="/login" replace={true} />;
   }
 };

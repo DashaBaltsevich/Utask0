@@ -1,0 +1,17 @@
+@import '../../consts.scss';
+.header {
+    height: 55px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: $orange-color;
+    border-bottom: 1px solid $orange-color;
+    padding: 10px 10px;
+    &__logo {
+        font-size: 26px;
+    }
+    &__icon {
+        width: 25px;
+        height: 25px;
+    }
+}

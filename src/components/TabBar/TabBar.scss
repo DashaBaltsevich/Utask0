@@ -1,0 +1,50 @@
+@import '../../consts.scss';
+
+.l-tabbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 12px;
+    height: $tabbar-height;
+    padding: 0 5px;
+
+    &__nav {
+        background-color: $orange-color; 
+        position: fixed;
+        width: 100%;      
+        bottom: 0;
+    }
+    
+    &__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #fff;
+        cursor: pointer;
+        height: 100%;
+        width: 80px;
+
+        &_icon {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 5px;
+        }
+        &-wrap-active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 80px;
+            height: 55px;
+            background-color: rgba(0, 0, 0, .1);
+        }
+    }
+}
+
+@media(max-width: 479px) {
+    .l-tabbar__item {
+        width: 50px;
+        &-wrap-active::before {
+            width: 50px;
+        }
+    }
+}
