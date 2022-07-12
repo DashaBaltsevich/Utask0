@@ -4,7 +4,7 @@ import './LoginForm.scss';
 import * as yup from 'yup';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { setUserInformation } from '../../store/actions';
+import { setUserInformation, setIsAuthorised } from '../../store/actions';
 import { login } from '../../api/facades';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 
@@ -26,6 +26,7 @@ export const LoginForm: React.FC = () => {
   );
   const isStudent: boolean = permission === 2 ? true : false;
   const dispatch = useDispatch();
+  // const navigate = useNavigate();
 
   const handleFormSubmit = async (values: object) => {
     console.log(values);
@@ -33,6 +34,8 @@ export const LoginForm: React.FC = () => {
       const data = await login(values);
       console.log(data);
       dispatch(setUserInformation(data?.content.user));
+      dispatch(setIsAuthorised(true));
+      // navigate('../main', { replace: true });
       localStorage.setItem('accessToken', data?.content.token.accessToken);
       localStorage.setItem('refreshToken', data?.content.token.refreshToken);
     } catch (err) {
@@ -91,10 +94,11 @@ export const LoginForm: React.FC = () => {
                 component={() => <p className="f-login__field-error"></p>}
               />
             </div>
-
-            <button type="submit" className="f-login__btn-submit">
-              Войти
-            </button>
+            <NavLink to="/main">
+              <button type="submit" className="f-login__btn-submit">
+                Войти
+              </button>
+            </NavLink>
 
             <div className="f-login__row-links">
               <NavLink

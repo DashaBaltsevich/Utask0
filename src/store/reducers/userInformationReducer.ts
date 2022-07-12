@@ -1,4 +1,10 @@
-import { ADMIN, SPECIALIST, STUDENT, SET_USER_INFORMATION } from '../constants';
+import {
+  ADMIN,
+  SPECIALIST,
+  STUDENT,
+  SET_USER_INFORMATION,
+  SET_IS_AUTHORISED,
+} from '../constants';
 
 interface UserInformationState {
   isAuthorised: boolean;
@@ -41,6 +47,11 @@ export const userInformationReducer = (
       return {
         ...state,
         userInformation: action.payload,
+      };
+    case SET_IS_AUTHORISED:
+      return {
+        ...state,
+        isAuthorised: true,
       };
     default:
       return state;
