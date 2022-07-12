@@ -1,5 +1,5 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import './LoginForm.scss';
 import * as yup from 'yup';
 import React from 'react';
@@ -26,16 +26,14 @@ export const LoginForm: React.FC = () => {
   );
   const isStudent: boolean = permission === 2 ? true : false;
   const dispatch = useDispatch();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleFormSubmit = async (values: object) => {
-    console.log(values);
     try {
       const data = await login(values);
-      console.log(data);
       dispatch(setUserInformation(data?.content.user));
       dispatch(setIsAuthorised(true));
-      // navigate('../main', { replace: true });
+      navigate('../main', { replace: true });
       localStorage.setItem('accessToken', data?.content.token.accessToken);
       localStorage.setItem('refreshToken', data?.content.token.refreshToken);
     } catch (err) {
@@ -94,11 +92,9 @@ export const LoginForm: React.FC = () => {
                 component={() => <p className="f-login__field-error"></p>}
               />
             </div>
-            <NavLink to="/main">
-              <button type="submit" className="f-login__btn-submit">
-                Войти
-              </button>
-            </NavLink>
+            <button type="submit" className="f-login__btn-submit">
+              Войти
+            </button>
 
             <div className="f-login__row-links">
               <NavLink
