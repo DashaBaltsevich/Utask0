@@ -1,8 +1,8 @@
+import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { NavLink, useNavigate } from 'react-router-dom';
 import './LoginForm.scss';
 import * as yup from 'yup';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setUserInformation, setIsAuthorised } from '../../store/actions';
 import { login } from '../../api/facades';
@@ -24,7 +24,7 @@ export const LoginForm: React.FC = () => {
   const { permission } = useTypedSelector(
     (state) => state.userInformationReducer,
   );
-  const isStudent: boolean = permission === 2 ? true : false;
+  const isStudent = permission === 2 ? true : false;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ export const LoginForm: React.FC = () => {
       const data = await login(values);
       dispatch(setUserInformation(data?.content.user));
       dispatch(setIsAuthorised(true));
-      navigate('../userInformation', { replace: true });
+      navigate('../orders', { replace: true });
       localStorage.setItem('accessToken', data?.content.token.accessToken);
       localStorage.setItem('refreshToken', data?.content.token.refreshToken);
     } catch (err) {

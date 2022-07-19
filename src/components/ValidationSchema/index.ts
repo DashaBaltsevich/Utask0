@@ -1,0 +1,1 @@
+export { ValidationUserInformationSchema } from './ValidationSchema';

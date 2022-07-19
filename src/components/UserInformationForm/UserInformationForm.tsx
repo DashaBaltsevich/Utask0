@@ -1,43 +1,110 @@
 import { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-// import { NavLink } from 'react-router-dom';
 import './UserInformationForm.scss';
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import DatePicker from 'react-datepicker';
+import { setUserInformation } from '../../store/actions';
+import { updateUserInformation } from '../../api/facades';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { ValidationUserInformationSchema } from '../ValidationSchema';
+import 'react-datepicker/dist/react-datepicker.css';
 
-// const validationSchema = yup.object({
-//     email: yup
-//       .string()
-//       .email('Invalid email address')
-//       .required('Email is required')
-//       .max(30, 'Are you really sure that your email is that big?'),
-//     password: yup
-//       .string()
-//       .required('Password is required')
-//       .min(6, 'Must be more than 6 characters')
-//       .max(30, 'Are you sure that your password is that big?'),
-//     passwordConfirmation: yup
-//       .string()
-//       .oneOf([yup.ref('password'), null], 'Passwords must match')
-//   });
-interface userDataArrayType {
-  textAbout: string;
-  textEducation: string;
-  textExpirience: string;
-  textAddress: string;
-}
+// interface userDataArrayType {
+//   about: string;
+//   textEducation: string;
+//   textExpirience: string;
+//   textAddress: string;
+// }
 
 export const UserInformationForm = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
-  const handleFormSubmit = (values: userDataArrayType) => {
+  const { userInformation } = useTypedSelector(
+    (state) => state.userInformationReducer,
+  );
+  const dispatch = useDispatch();
+
+  const [startDate, setStartDate] = useState(new Date());
+  const gender =
+    userInformation?.gender === 0
+      ? 'женский'
+      : userInformation?.gender === 1
+      ? 'мужской'
+      : 'другое';
+
+  const skills = userInformation?.skills.map((item: string) => {
+    item =
+      item === 'english'
+        ? 'Английский'
+        : item === 'belarus'
+        ? 'Белорусский'
+        : item === 'russian'
+        ? 'Русский'
+        : item === 'math'
+        ? 'Математика'
+        : item === 'higher_math'
+        ? 'Высшая математика'
+        : item === 'chemistry'
+        ? 'Химия'
+        : item === 'biology'
+        ? 'Биология'
+        : item === 'computer_science'
+        ? 'Информатика'
+        : item === 'history'
+        ? 'История'
+        : item === 'literature'
+        ? 'Литература'
+        : item === 'social_science'
+        ? 'Обществоведение'
+        : item === 'philosophy'
+        ? 'Философия'
+        : item === 'philology'
+        ? 'Филология'
+        : item === 'drawing'
+        ? 'Черчение'
+        : item === 'economy'
+        ? 'Экономика'
+        : item === 'geography'
+        ? 'География'
+        : 'Другое';
+    return item;
+  });
+
+  const сlassesFormat: Array<string> = userInformation?.сlassesFormat.map(
+    (item: string) => {
+      item =
+        item === 'remotely'
+          ? 'Удаленно'
+          : item === 'at_the_tutor'
+          ? 'У ученика'
+          : item === 'at_home'
+          ? 'У репетитора'
+          : 'Не важно';
+      return item;
+    },
+  );
+  const birthDate = `${startDate.getDate()}.${startDate.getMonth()}.${startDate.getFullYear()}`;
+  const currentYear = userInformation?.workExperience.tillNow
+    ? new Date().getFullYear()
+    : 0;
+
+  const handleFormSubmit = async (values: any) => {
     setIsEditFormOpen(false);
     const userDataArray = {
-      textAbout: values.textAbout,
-      textEducation: values.textEducation,
-      textExpirience: values.textExpirience,
-      textAddress: values.textAddress,
+      ...values,
+      birthDate: `${startDate}`,
+      workExperience: {
+        ...values.workExperience,
+        yearEnd: `${currentYear}`,
+      },
     };
-    //создать этот массив в локалсторадже по дефолту ( т.к. если очистить - ошибка )
-    localStorage.setItem('userDataArray', JSON.stringify(userDataArray));
+
+    try {
+      const data = await updateUserInformation(userDataArray);
+      dispatch(setUserInformation(data?.content));
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -46,30 +113,36 @@ export const UserInformationForm = () => {
       {isEditFormOpen ? (
         <Formik
           initialValues={{
+            education: {
+              title: '',
+              faculty: '',
+              spec: '',
+              yearStart: '',
+              yearEnd: '',
+            },
+            workExperience: {
+              organization: '',
+              position: '',
+              yearStart: '',
+              yearEnd: '',
+              tillNow: false,
+            },
+            address: {
+              city: '',
+              street: '',
+              line2: '',
+            },
             firstName: '',
             lastName: '',
+            about: '',
             gender: '',
-            birthday: '',
-            phone: '',
-            textAbout: '',
-            textEducation: '',
-            startEducation: '',
-            endEducation: '',
-            endEducationForNow: false,
-            textExpirience: '',
-            startExpirience: '',
-            endExpirience: '',
-            endExpirienceForNow: false,
-            cityAddress: '',
-            areaAddress: '',
-            streetAddress: '',
-            korpusAddress: '',
-            houseAddress: '',
-            flatAddress: '',
-            services: '',
+            birthDate: '',
+            phoneNumber: '',
+            skills: [],
+            сlassesFormat: [],
           }}
           validateOnBlur={false}
-          // validationSchema={validationSchema}
+          validationSchema={ValidationUserInformationSchema}
           onSubmit={(values: any) => handleFormSubmit(values)}
         >
           {({ values }) => (
@@ -91,9 +164,9 @@ export const UserInformationForm = () => {
                 />
                 <ErrorMessage
                   name="firstName"
-                  // component={({ children }) => (
-                  //   <p className="f-user-info__field-error">{children}</p>
-                  // )}
+                  component={({ children }: any) => (
+                    <p className="f-user-info__field-error">{children}</p>
+                  )}
                 />
               </div>
               <div className="f-user-info__row">
@@ -113,9 +186,9 @@ export const UserInformationForm = () => {
                 />
                 <ErrorMessage
                   name="lastName"
-                  // component={({ children }) => (
-                  //   <p className="f-user-info__field-error">{children}</p>
-                  // )}
+                  component={({ children }: any) => (
+                    <p className="f-user-info__field-error">{children}</p>
+                  )}
                 />
               </div>
               <div className="f-user-info__row">
@@ -127,49 +200,46 @@ export const UserInformationForm = () => {
                 </label>
                 <br />
                 <Field
-                  as="select"
+                  component="select"
                   id="gender"
                   name="gender"
                   className="f-user-info__field"
                   value={values.gender}
                 >
-                  <option value="women">ж</option>
-                  <option value="men">м</option>
-                  <option value="other">др.</option>
+                  <option value="" label="Выберите"></option>
+                  <option value="0">ж</option>
+                  <option value="1">м</option>
+                  <option value="2">др.</option>
                 </Field>
                 <ErrorMessage
                   name="gender"
-                  // component={({ children }) => (
-                  //   <p className="f-user-info__field-error">{children}</p>
-                  // )}
+                  component={({ children }: any) => (
+                    <p className="f-user-info__field-error">{children}</p>
+                  )}
                 />
               </div>
               <div className="f-user-info__row">
                 <label
-                  htmlFor="birthday"
+                  htmlFor="birthDate"
                   className="f-user-info__field-label-bold"
                 >
                   Дата Рождения{' '}
                   <span className="l-user-info__title_span">*</span>:
                 </label>
                 <br />
-                <Field
-                  component="input"
-                  id="birthday"
-                  name="birthday"
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date: Date) => setStartDate(date)}
+                  showYearDropdown
+                  dateFormatCalendar="MMMM"
+                  yearDropdownItemNumber={70}
+                  scrollableYearDropdown
                   className="f-user-info__field"
-                  value={values.birthday}
-                />
-                <ErrorMessage
-                  name="birthday"
-                  // component={({ children }) => (
-                  //   <p className="f-user-info__field-error">{children}</p>
-                  // )}
                 />
               </div>
               <div className="f-user-info__row">
                 <label
-                  htmlFor="phone"
+                  htmlFor="phoneNumber"
                   className="f-user-info__field-label-bold"
                 >
                   Номер телефона{' '}
@@ -178,189 +248,248 @@ export const UserInformationForm = () => {
                 <br />
                 <Field
                   component="input"
-                  id="phone"
-                  name="phone"
+                  id="phoneNumber"
+                  name="phoneNumber"
                   className="f-user-info__field"
-                  value={values.phone}
+                  value={values.phoneNumber}
                 />
-                {/* <ErrorMessage
-                  name="phone"
-                  component={({ children }) => (
+                <ErrorMessage
+                  name="phoneNumber"
+                  component={({ children }: any) => (
                     <p className="f-user-info__field-error">{children}</p>
                   )}
-                /> */}
+                />
               </div>
               <div className="f-user-info__row">
                 <label
-                  htmlFor="textAbout"
+                  htmlFor="about"
                   className="f-user-info__field-label-bold"
                 >
-                  О себе:
+                  О себе <span className="l-user-info__title_span">*</span>:
                 </label>
                 <br />
                 <Field
                   component="textarea"
-                  id="textAbout"
-                  name="textAbout"
+                  id="about"
+                  name="about"
                   className="f-user-info__field"
-                  value={values.textAbout}
+                  value={values.about}
                 />
-                {/* <ErrorMessage
-                  name="textAbout"
-                  component={({ children }) => (
+                <ErrorMessage
+                  name="about"
+                  component={({ children }: any) => (
                     <p className="f-user-info__field-error">{children}</p>
                   )}
-                /> */}
+                />
               </div>
 
               <div className="f-user-info__row">
                 <h3 className="f-user-info__field-title">Образование:</h3>
                 <label
-                  htmlFor="textEducation"
+                  htmlFor="textEducationTitle"
                   className="f-user-info__field-label-light"
                 >
-                  Учебное заведение, факультет и специализация
+                  Учебное заведение{' '}
+                  <span className="l-user-info__title_span">*</span>
                 </label>
                 <Field
                   component="textarea"
-                  id="textEducation"
-                  name="textEducation"
+                  id="textEducationTitle"
+                  name="education.title"
                   className="f-user-info__field"
-                  value={values.textEducation}
+                  value={values.education.title}
                 />
-                {/* <ErrorMessage
-                  name="textEducation"
-                  component={({ children }) => (
+                <ErrorMessage
+                  name="education.title"
+                  component={({ children }: any) => (
                     <p className="f-user-info__field-error">{children}</p>
                   )}
-                /> */}
+                />
+                <label
+                  htmlFor="textEducationFaculty"
+                  className="f-user-info__field-label-light"
+                >
+                  Факультет <span className="l-user-info__title_span">*</span>
+                </label>
+                <Field
+                  component="textarea"
+                  id="textEducationFaculty"
+                  name="education.faculty"
+                  className="f-user-info__field"
+                  value={values.education.faculty}
+                />
+                <ErrorMessage
+                  name="education.faculty"
+                  component={({ children }: any) => (
+                    <p className="f-user-info__field-error">{children}</p>
+                  )}
+                />
+                <label
+                  htmlFor="textEducationSpec"
+                  className="f-user-info__field-label-light"
+                >
+                  Специальность{' '}
+                  <span className="l-user-info__title_span">*</span>
+                </label>
+                <Field
+                  component="textarea"
+                  id="textEducationSpec"
+                  name="education.spec"
+                  className="f-user-info__field"
+                  value={values.education.spec}
+                />
+                <ErrorMessage
+                  name="education.spec"
+                  component={({ children }: any) => (
+                    <p className="f-user-info__field-error">{children}</p>
+                  )}
+                />
                 <div className="f-user-info__field-wrapp">
                   <div className="f-user-info__field-wrapp-inner">
                     <label
                       htmlFor="startEducation"
                       className="f-user-info__field-label-light"
                     >
-                      Год начала:
+                      Год начала{' '}
+                      <span className="l-user-info__title_span">*</span>:
                     </label>
                     <br />
                     <Field
                       component="input"
                       id="startEducation"
-                      name="startEducation"
+                      name="education.yearStart"
                       className="f-user-info__field number"
-                      value={values.startEducation}
+                      value={values.education.yearStart}
                     />
-                    {/* <ErrorMessage
-                      name="startEducation"
-                      component={({ children }) => (
-                        <p className="f-user-info__field-error">{children}</p>
+                    <ErrorMessage
+                      name="education.yearStart"
+                      component={({ children }: any) => (
+                        <p className="f-user-info__field-error number">
+                          {children}
+                        </p>
                       )}
-                    /> */}
+                    />
                   </div>
                   <div className="f-user-info__field-wrapp-inner">
                     <label
                       htmlFor="endEducation"
                       className="f-user-info__field-label-light"
                     >
-                      Год окончания:
+                      Год окончания{' '}
+                      <span className="l-user-info__title_span">*</span>:
                     </label>
                     <br />
                     <Field
                       component="input"
                       id="endEducation"
-                      name="endEducation"
+                      name="education.yearEnd"
                       className="f-user-info__field number"
-                      value={values.endEducation}
+                      value={values.education.yearEnd}
                     />
-                    {/* <ErrorMessage
-                      name="endEducation"
-                      component={({ children }) => (
-                        <p className="f-user-info__field-error">{children}</p>
+                    <ErrorMessage
+                      name="education.yearEnd"
+                      component={({ children }: any) => (
+                        <p className="f-user-info__field-error number">
+                          {children}
+                        </p>
                       )}
-                    /> */}
+                    />
                   </div>
                 </div>
-                <label
-                  htmlFor="endEducationForNow"
-                  className="f-user-info__field-label-light"
-                >
-                  <Field
-                    type="checkbox"
-                    id="endEducationForNow"
-                    name="endEducationForNow"
-                    className="f-user-info__field"
-                    value={values.endEducationForNow}
-                  />
-                  По настоящее время
-                </label>
               </div>
 
               <div className="f-user-info__row">
-                <h3 className="f-user-info__field-title">Опыт работы</h3>
+                <h3 className="f-user-info__field-title">Опыт работы:</h3>
                 <label
-                  htmlFor="textExpirience"
+                  htmlFor="workExpirienceOrganization"
                   className="f-user-info__field-label-light"
                 >
-                  Организация и должность
+                  Организация <span className="l-user-info__title_span">*</span>
                 </label>
                 <br />
                 <Field
                   component="textarea"
-                  id="textExpirience"
-                  name="textExpirience"
+                  id="workExpirienceOrganization"
+                  name="workExperience.organization"
                   className="f-user-info__field"
-                  value={values.textExpirience}
+                  value={values.workExperience.organization}
                 />
-                {/* <ErrorMessage
-                  name="textExpirience"
-                  component={({ children }) => (
+                <ErrorMessage
+                  name="workExperience.organization"
+                  component={({ children }: any) => (
                     <p className="f-user-info__field-error">{children}</p>
                   )}
-                /> */}
+                />
+                <label
+                  htmlFor="workExpiriencePosition"
+                  className="f-user-info__field-label-light"
+                >
+                  Должность <span className="l-user-info__title_span">*</span>
+                </label>
+                <br />
+                <Field
+                  component="textarea"
+                  id="workExpiriencePosition"
+                  name="workExperience.position"
+                  className="f-user-info__field"
+                  value={values.workExperience.position}
+                />
+                <ErrorMessage
+                  name="workExperience.position"
+                  component={({ children }: any) => (
+                    <p className="f-user-info__field-error">{children}</p>
+                  )}
+                />
                 <div className="f-user-info__field-wrapp">
                   <div className="f-user-info__field-wrapp-inner">
                     <label
-                      htmlFor="startExpirience"
+                      htmlFor="workExpirienceStart"
                       className="f-user-info__field-label-light"
                     >
-                      Год начала:
+                      Год начала{' '}
+                      <span className="l-user-info__title_span">*</span>:
                     </label>
                     <br />
                     <Field
                       component="input"
-                      id="startExpirience"
-                      name="startExpirience"
+                      id="workExpirienceStart"
+                      name="workExperience.yearStart"
                       className="f-user-info__field number"
-                      value={values.startExpirience}
+                      value={values.workExperience.yearStart}
                     />
-                    {/* <ErrorMessage
-                      name="startExpirience"
-                      component={({ children }) => (
-                        <p className="f-user-info__field-error">{children}</p>
+                    <ErrorMessage
+                      name="workExperience.yearStart"
+                      component={({ children }: any) => (
+                        <p className="f-user-info__field-error number">
+                          {children}
+                        </p>
                       )}
-                    /> */}
+                    />
                   </div>
                   <div className="f-user-info__field-wrapp-inner">
                     <label
-                      htmlFor="endExpirience"
+                      htmlFor="workExpirienceEnd"
                       className="f-user-info__field-label-light"
                     >
-                      Год окончания:
+                      Год окончания{' '}
+                      <span className="l-user-info__title_span">*</span>:
                     </label>
                     <br />
                     <Field
                       component="input"
-                      id="endExpirience"
-                      name="endExpirience"
+                      id="workExpirienceEnd"
+                      name="workExperience.yearEnd"
                       className="f-user-info__field number"
-                      value={values.endExpirience}
+                      value={values.workExperience.yearEnd}
                     />
-                    {/* <ErrorMessage
-                      name="endExpirience"
-                      component={({ children }) => (
-                        <p className="f-user-info__field-error">{children}</p>
+                    <ErrorMessage
+                      name="workExperience.yearEnd"
+                      component={({ children }: any) => (
+                        <p className="f-user-info__field-error number">
+                          {children}
+                        </p>
                       )}
-                    /> */}
+                    />
                   </div>
                 </div>
                 <label
@@ -370,156 +499,93 @@ export const UserInformationForm = () => {
                   <Field
                     type="checkbox"
                     id="endExpirienceForNow"
-                    name="endExpirienceForNow"
+                    name="workExperience.tillNow"
                     className="f-user-info__field"
-                    value="true"
                   />
                   По настоящее время
                 </label>
               </div>
 
               <div className="f-user-info__row">
-                <h3 className="f-user-info__field-title">Адрес</h3>
+                <h3 className="f-user-info__field-title">Адрес:</h3>
                 <label
                   htmlFor="cityAddress"
                   className="f-user-info__field-label-light"
                 >
-                  Город:
+                  Город <span className="l-user-info__title_span">*</span>
                 </label>
                 <br />
                 <Field
                   component="input"
                   id="cityAddress"
-                  name="cityAddress"
+                  name="address.city"
                   className="f-user-info__field"
-                  value={values.cityAddress}
+                  value={values.address.city}
                 />
-                {/* <ErrorMessage
-                  name="cityAddress"
-                  component={({ children }) => (
+                <ErrorMessage
+                  name="address.city"
+                  component={({ children }: any) => (
                     <p className="f-user-info__field-error">{children}</p>
                   )}
-                /> */}
-                <br />
-                <label
-                  htmlFor="areaAddress"
-                  className="f-user-info__field-label-light"
-                >
-                  Район:
-                </label>
-                <br />
-                <Field
-                  component="input"
-                  id="areaAddress"
-                  name="areaAddress"
-                  className="f-user-info__field"
-                  value={values.areaAddress}
                 />
-                {/* <ErrorMessage
-                  name="areaAddress"
-                  component={({ children }) => (
-                    <p className="f-user-info__field-error">{children}</p>
-                  )}
-                /> */}
                 <br />
                 <label
                   htmlFor="streetAddress"
                   className="f-user-info__field-label-light"
                 >
-                  Улица:
+                  Улица <span className="l-user-info__title_span">*</span>
                 </label>
                 <br />
                 <Field
                   component="input"
                   id="streetAddress"
-                  name="streetAddress"
+                  name="address.street"
                   className="f-user-info__field"
-                  value={values.streetAddress}
+                  value={values.address.street}
                 />
-                {/* <ErrorMessage
-                  name="streetAddress"
-                  component={({ children }) => (
+                <ErrorMessage
+                  name="address.street"
+                  component={({ children }: any) => (
                     <p className="f-user-info__field-error">{children}</p>
                   )}
-                /> */}
+                />
                 <div className="f-user-info__field-wrapp">
                   <div className="f-user-info__field-wrapp-inner">
                     <label
-                      htmlFor="korpusAddress"
+                      htmlFor="AddressLine"
                       className="f-user-info__field-label-light"
                     >
-                      Корпус:
+                      Корпус, Дом, Квартира{' '}
+                      <span className="l-user-info__title_span">*</span>
                     </label>
                     <br />
                     <Field
                       component="input"
-                      id="korpusAddress"
-                      name="korpusAddress"
-                      className="f-user-info__field number"
-                      value={values.korpusAddress}
+                      id="AddressLine"
+                      name="address.line2"
+                      className="f-user-info__field"
+                      value={values.address.line2}
                     />
-                    {/* <ErrorMessage
-                      name="korpusAddress"
-                      component={({ children }) => (
+                    <ErrorMessage
+                      name="address.line2"
+                      component={({ children }: any) => (
                         <p className="f-user-info__field-error">{children}</p>
                       )}
-                    /> */}
-                  </div>
-                  <div className="f-user-info__field-wrapp-inner">
-                    <label
-                      htmlFor="houseAddress"
-                      className="f-user-info__field-label-light"
-                    >
-                      Дом:
-                    </label>
-                    <br />
-                    <Field
-                      component="input"
-                      id="houseAddress"
-                      name="houseAddress"
-                      className="f-user-info__field number"
-                      value={values.houseAddress}
                     />
-                    {/* <ErrorMessage
-                      name="houseAddress"
-                      component={({ children }) => (
-                        <p className="f-user-info__field-error">{children}</p>
-                      )}
-                    /> */}
-                  </div>
-                  <div className="f-user-info__field-wrapp-inner">
-                    <label
-                      htmlFor="flatAddress"
-                      className="f-user-info__field-label-light"
-                    >
-                      Квартира:
-                    </label>
-                    <br />
-                    <Field
-                      component="input"
-                      id="flatAddress"
-                      name="flatAddress"
-                      className="f-user-info__field number"
-                      value={values.flatAddress}
-                    />
-                    {/* <ErrorMessage
-                      name="flatAddress"
-                      component={({ children }) => (
-                        <p className="f-user-info__field-error">{children}</p>
-                      )}
-                    /> */}
                   </div>
                 </div>
               </div>
               <div className="f-user-info__row">
-                <h3 className="f-user-info__field-title">Услуги</h3>
+                <h3 className="f-user-info__field-title">
+                  Услуги <span className="l-user-info__title_span">*</span>:
+                </h3>
                 <label htmlFor="services" className="f-user-info__field-label">
                   <Field
                     type="checkbox"
                     id="services"
-                    name="services"
+                    name="skills"
                     className="f-user-info__field"
-                    value={values.services}
+                    value="english"
                   />
                   Английский язык
                 </label>
@@ -528,9 +594,9 @@ export const UserInformationForm = () => {
                   <Field
                     type="checkbox"
                     id="services"
-                    name="services"
+                    name="skills"
                     className="f-user-info__field"
-                    value={values.services}
+                    value="belarus"
                   />
                   Белорусский язык
                 </label>
@@ -539,9 +605,9 @@ export const UserInformationForm = () => {
                   <Field
                     type="checkbox"
                     id="services"
-                    name="services"
+                    name="skills"
                     className="f-user-info__field"
-                    value={values.services}
+                    value="russian"
                   />
                   Русский язык
                 </label>
@@ -550,9 +616,9 @@ export const UserInformationForm = () => {
                   <Field
                     type="checkbox"
                     id="services"
-                    name="services"
+                    name="skills"
                     className="f-user-info__field"
-                    value={values.services}
+                    value="math"
                   />
                   Математика
                 </label>
@@ -561,9 +627,9 @@ export const UserInformationForm = () => {
                   <Field
                     type="checkbox"
                     id="services"
-                    name="services"
+                    name="skills"
                     className="f-user-info__field"
-                    value={values.services}
+                    value="higher_math"
                   />
                   Высшая математика
                 </label>
@@ -572,9 +638,9 @@ export const UserInformationForm = () => {
                   <Field
                     type="checkbox"
                     id="services"
-                    name="services"
+                    name="skills"
                     className="f-user-info__field"
-                    value={values.services}
+                    value="chemistry"
                   />
                   Химия
                 </label>
@@ -583,9 +649,9 @@ export const UserInformationForm = () => {
                   <Field
                     type="checkbox"
                     id="services"
-                    name="services"
+                    name="skills"
                     className="f-user-info__field"
-                    value={values.services}
+                    value="biology"
                   />
                   Биология
                 </label>
@@ -594,9 +660,9 @@ export const UserInformationForm = () => {
                   <Field
                     type="checkbox"
                     id="services"
-                    name="services"
+                    name="skills"
                     className="f-user-info__field"
-                    value={values.services}
+                    value="computer_science"
                   />
                   Информатика
                 </label>
@@ -605,9 +671,9 @@ export const UserInformationForm = () => {
                   <Field
                     type="checkbox"
                     id="services"
-                    name="services"
+                    name="skills"
                     className="f-user-info__field"
-                    value={values.services}
+                    value="history"
                   />
                   История
                 </label>
@@ -616,12 +682,140 @@ export const UserInformationForm = () => {
                   <Field
                     type="checkbox"
                     id="services"
-                    name="services"
+                    name="skills"
                     className="f-user-info__field"
-                    value={values.services}
+                    value="literature"
                   />
                   Литература
                 </label>
+                <br />
+                <label htmlFor="services" className="f-user-info__field-label">
+                  <Field
+                    type="checkbox"
+                    id="services"
+                    name="skills"
+                    className="f-user-info__field"
+                    value="social_science"
+                  />
+                  Обществоведение
+                </label>
+                <br />
+                <label htmlFor="services" className="f-user-info__field-label">
+                  <Field
+                    type="checkbox"
+                    id="services"
+                    name="skills"
+                    className="f-user-info__field"
+                    value="philosophy"
+                  />
+                  Философия
+                </label>
+                <br />
+                <label htmlFor="services" className="f-user-info__field-label">
+                  <Field
+                    type="checkbox"
+                    id="services"
+                    name="skills"
+                    className="f-user-info__field"
+                    value="philology"
+                  />
+                  Филология
+                </label>
+                <br />
+                <label htmlFor="services" className="f-user-info__field-label">
+                  <Field
+                    type="checkbox"
+                    id="services"
+                    name="skills"
+                    className="f-user-info__field"
+                    value="drawing"
+                  />
+                  Черчение
+                </label>
+                <br />
+                <label htmlFor="services" className="f-user-info__field-label">
+                  <Field
+                    type="checkbox"
+                    id="services"
+                    name="skills"
+                    className="f-user-info__field"
+                    value="economy"
+                  />
+                  Экономика
+                </label>
+                <br />
+                <label htmlFor="services" className="f-user-info__field-label">
+                  <Field
+                    type="checkbox"
+                    id="services"
+                    name="skills"
+                    className="f-user-info__field"
+                    value="geography"
+                  />
+                  География
+                </label>
+              </div>
+              <div className="f-user-info__row">
+                <h3 className="f-user-info__field-title">
+                  Где удобно проводить занятие{' '}
+                  <span className="l-user-info__title_span">*</span>:
+                </h3>
+                <label
+                  htmlFor="сlassesFormat"
+                  className="f-user-info__field-label"
+                >
+                  <Field
+                    type="checkbox"
+                    id="сlassesFormat"
+                    name="сlassesFormat"
+                    className="f-user-info__field"
+                    value="at_the_tutor"
+                  />
+                  У ученика
+                </label>
+                <br />
+                <label
+                  htmlFor="сlassesFormat"
+                  className="f-user-info__field-label"
+                >
+                  <Field
+                    type="checkbox"
+                    id="сlassesFormat"
+                    name="сlassesFormat"
+                    className="f-user-info__field"
+                    value="at_home"
+                  />
+                  У репетитора
+                </label>
+                <br />
+                <label
+                  htmlFor="сlassesFormat"
+                  className="f-user-info__field-label"
+                >
+                  <Field
+                    type="checkbox"
+                    id="сlassesFormat"
+                    name="сlassesFormat"
+                    className="f-user-info__field"
+                    value="remotely"
+                  />
+                  Удаленно
+                </label>
+                <br />
+                <label
+                  htmlFor="сlassesFormat"
+                  className="f-user-info__field-label"
+                >
+                  <Field
+                    type="checkbox"
+                    id="сlassesFormat"
+                    name="сlassesFormat"
+                    className="f-user-info__field"
+                    value="no_matter"
+                  />
+                  Не важно
+                </label>
+                <br />
               </div>
 
               <button type="submit" className="f-user-info__btn-submit">
@@ -637,57 +831,100 @@ export const UserInformationForm = () => {
               <h3 className="l-user-info__title">
                 Имя Фамилия <span className="l-user-info__title_span">*</span>
               </h3>
-              <p className="l-user-info__text">Бальцевич Дарья</p>
+              <p className="l-user-info__text">
+                {userInformation?.firstName} {userInformation?.lastName}
+              </p>
             </li>
             <li className="l-user-info__item">
               <h3 className="l-user-info__title">
                 Пол <span className="l-user-info__title_span">*</span>
               </h3>
-              <p className="l-user-info__text">женский</p>
+              <p className="l-user-info__text">{gender}</p>
             </li>
             <li className="l-user-info__item">
               <h3 className="l-user-info__title">
                 Дата Рождения <span className="l-user-info__title_span">*</span>
               </h3>
-              <p className="l-user-info__text">26.02.1999</p>
+              <p className="l-user-info__text">{birthDate}</p>
             </li>
             <li className="l-user-info__item">
               <h3 className="l-user-info__title">
                 Номер телефона{' '}
                 <span className="l-user-info__title_span">*</span>
               </h3>
-              <p className="l-user-info__text">+375336212284</p>
+              <p className="l-user-info__text">
+                {userInformation?.phoneNumber}
+              </p>
             </li>
             <li className="l-user-info__item">
               <h3 className="l-user-info__title">О себе</h3>
-              <p className="l-user-info__text">
-                Загрузите фото документов об образовании и опыте работы. Клиенты
-                их не увидят. После проверки мы добавим отметку «Данные
-                проверены» на вашу персональную страницу. К проверенным
-                специалистам доверие клиентов выше.
-              </p>
+              <p className="l-user-info__text">{userInformation?.about}</p>
             </li>
             <li className="l-user-info__item">
               <h3 className="l-user-info__title">Образование</h3>
-              <p className="l-user-info__text">
-                БГУ, химический факультет, специальность – фундаментальная
-                химия, кафедра органической химии (с 2016 г.).
-              </p>
+              <div className="l-user-info__text-wrapper">
+                <p className="l-user-info__text">
+                  Учебное заведение: {userInformation?.education.title}
+                </p>
+                <p className="l-user-info__text">
+                  Факультет: {userInformation?.education.faculty}
+                </p>
+                <p className="l-user-info__text">
+                  {userInformation?.education.yearStart} -{' '}
+                  {userInformation?.education.yearEnd}
+                </p>
+              </div>
             </li>
             <li className="l-user-info__item">
               <h3 className="l-user-info__title">Опыт работы</h3>
-              <p className="l-user-info__text">
-                ООО «БелХард Девелопмент», должность – химик-инженер, датабейзер
-                — 2 года.
-              </p>
+              <div className="l-user-info__text-wrapper">
+                <p className="l-user-info__text">
+                  Организация: {userInformation?.workExperience.organization}
+                </p>
+                <p className="l-user-info__text">
+                  Должность: {userInformation?.workExperience.position}
+                </p>
+                <p className="l-user-info__text">
+                  {userInformation?.workExperience.yearStart} -{' '}
+                  {userInformation?.workExperience.yearEnd}
+                </p>
+              </div>
             </li>
             <li className="l-user-info__item">
               <h3 className="l-user-info__title">Адрес</h3>
-              <p className="l-user-info__text">Фрунзенский район</p>
+              <p className="l-user-info__text">
+                Город {userInformation?.address.city}, улица{' '}
+                {userInformation?.address.street},{' '}
+                {userInformation?.address.line2}
+              </p>
             </li>
             <li className="l-user-info__item">
               <h3 className="l-user-info__title">Услуги</h3>
-              <p className="l-user-info__text">Математика, химия</p>
+              <ul className="l-user-info__sublist">
+                {skills &&
+                  skills.map((item: string) => {
+                    return (
+                      <li className="l-user-info__sublist_item" key={item}>
+                        {item}{' '}
+                      </li>
+                    );
+                  })}
+              </ul>
+            </li>
+            <li className="l-user-info__item">
+              <h3 className="l-user-info__title">
+                Где удобно проводить занятия?
+              </h3>
+              <ul className="l-user-info__sublist">
+                {сlassesFormat &&
+                  сlassesFormat.map((item: string) => {
+                    return (
+                      <li className="l-user-info__sublist_item" key={item}>
+                        {item}{' '}
+                      </li>
+                    );
+                  })}
+              </ul>
             </li>
           </ul>
           <button

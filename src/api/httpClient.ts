@@ -6,11 +6,32 @@ export const httpClient = axios.create({
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    // Authorization: `Bearer ${localStorage.getItme('accessToken')}`,
   },
 });
 
-// httpClient.interceptors.request.use((config) => {
-//   const method = config.method;
-//   console.log(config);
-// });
+// interface HeadersState {
+//   Accept: string;
+//   'Content-Type': string;
+//   Authorization: string;
+// }
+
+// interface ConfigState {
+//   method: string;
+//   url: string;
+//   headers: HeadersState;
+// }
+
+httpClient.interceptors.request.use((config: any) => {
+  const method = config.method;
+  const url = config.url;
+  if (
+    (method === 'get' && url === 'user') ||
+    (method === 'patch' && url === 'user')
+  ) {
+    config.headers.common.Authorization = `Bearer ${localStorage.getItem(
+      'accessToken',
+    )}`;
+  }
+  // console.log(config);
+  return config;
+});
