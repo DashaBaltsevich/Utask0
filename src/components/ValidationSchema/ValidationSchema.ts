@@ -1,5 +1,7 @@
 import * as yup from 'yup';
 
+//доделать валидацию полей, дата рождения!
+
 export const ValidationUserInformationSchema = yup.object({
   firstName: yup
     .string()

@@ -71,8 +71,13 @@ input[type='checkbox'] {
   &__title {
     text-align: center;
   }
-  &__btn-submit {
-    align-self: center;
+  &__btn {
+    & + & {
+      margin-left: 15px;
+    }
+    &-wrapper {
+      align-self: center;
+    }
   }
 }
 
@@ -117,9 +122,10 @@ input[type='checkbox'] {
   }
 }
 
-.f-user-info__btn-submit,
+.f-user-info__btn,
 .l-user-info__btn {
   padding: 5px 10px;
+  width: 135px;
   margin-top: 30px;
   border: 1px solid $orange-color;
   border-radius: 8px;

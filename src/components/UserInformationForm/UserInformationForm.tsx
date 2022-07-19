@@ -818,9 +818,17 @@ export const UserInformationForm = () => {
                 <br />
               </div>
 
-              <button type="submit" className="f-user-info__btn-submit">
-                Сохранить
-              </button>
+              <div className="f-user-info__btn-wrapper">
+                <button type="submit" className="f-user-info__btn">
+                  Сохранить
+                </button>
+                <button
+                  className="f-user-info__btn"
+                  onClick={() => setIsEditFormOpen(false)}
+                >
+                  Назад
+                </button>
+              </div>
             </Form>
           )}
         </Formik>
@@ -892,11 +900,15 @@ export const UserInformationForm = () => {
             </li>
             <li className="l-user-info__item">
               <h3 className="l-user-info__title">Адрес</h3>
-              <p className="l-user-info__text">
-                Город {userInformation?.address.city}, улица{' '}
-                {userInformation?.address.street},{' '}
-                {userInformation?.address.line2}
-              </p>
+              <div className="l-user-info__text-wrapper">
+                <p className="l-user-info__text">
+                  Город: {userInformation?.address.city}
+                </p>
+                <p className="l-user-info__text">
+                  Улица: {userInformation?.address.street},{' '}
+                  {userInformation?.address.line2}
+                </p>
+              </div>
             </li>
             <li className="l-user-info__item">
               <h3 className="l-user-info__title">Услуги</h3>
