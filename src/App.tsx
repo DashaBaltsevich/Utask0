@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import {
   FirstScreen,
   LoginForm,
@@ -9,25 +10,42 @@ import {
   UserInformationForm,
 } from './components';
 import { useTypedSelector } from './hooks/useTypedSelector';
+import { getUserInformation } from './api/facades';
+import { setUserInformation, setIsAuthorised } from './store/actions';
 import './App.css';
 
 function App() {
   const isAuthorised: boolean = useTypedSelector(
     (state) => state.userInformationReducer.isAuthorised,
   );
+  const dispatch = useDispatch();
+  const [isStudent, setIsStudent] = useState(false);
+
   useEffect(() => {
-    console.log(isAuthorised);
-  });
+    if (!localStorage.getItem('accessToken')) {
+      return;
+    }
+    (async () => {
+      try {
+        const data = await getUserInformation();
+        dispatch(setUserInformation(data?.content));
+        dispatch(setIsAuthorised(true));
+      } catch (err) {
+        console.dir(err);
+      }
+    })();
+  }, []);
+
   return (
     <Routes>
-      <Route path="/" element={<FirstScreen />} />
-      <Route path="login" element={<LoginForm />} />
+      <Route path="/" element={<FirstScreen setIsStudent={setIsStudent} />} />
+      <Route path="login" element={<LoginForm isStudent={isStudent} />} />
       <Route
         path="/userInformation"
         element={
           <PrivateRoute isAllowed={isAuthorised}>
             <Template>
-              <UserInformationForm />
+              <UserInformationForm isStudent={isStudent} />
             </Template>
           </PrivateRoute>
         }
