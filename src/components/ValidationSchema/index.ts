@@ -1,1 +1,4 @@
-export { ValidationUserInformationSchema } from './ValidationSchema';
+export {
+  ValidationSpecInformationSchema,
+  ValidationStudentInformationSchema,
+} from './ValidationSchema';

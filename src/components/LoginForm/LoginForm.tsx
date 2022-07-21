@@ -6,7 +6,6 @@ import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { setUserInformation, setIsAuthorised } from '../../store/actions';
 import { login } from '../../api/facades';
-import { useTypedSelector } from '../../hooks/useTypedSelector';
 
 const validationSchema = yup.object({
   email: yup
@@ -20,11 +19,7 @@ const validationSchema = yup.object({
     .min(4, 'Must be more than 4 characters'),
 });
 
-export const LoginForm: React.FC = () => {
-  const { permission } = useTypedSelector(
-    (state) => state.userInformationReducer,
-  );
-  const isStudent = permission === 2 ? true : false;
+export const LoginForm = ({ isStudent }: { isStudent: boolean }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -33,6 +28,7 @@ export const LoginForm: React.FC = () => {
       const data = await login(values);
       dispatch(setUserInformation(data?.content.user));
       dispatch(setIsAuthorised(true));
+
       navigate('../orders', { replace: true });
       localStorage.setItem('accessToken', data?.content.token.accessToken);
       localStorage.setItem('refreshToken', data?.content.token.refreshToken);

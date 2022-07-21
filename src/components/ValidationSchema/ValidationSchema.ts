@@ -2,7 +2,7 @@ import * as yup from 'yup';
 
 //доделать валидацию полей, дата рождения!
 
-export const ValidationUserInformationSchema = yup.object({
+export const ValidationSpecInformationSchema = yup.object({
   firstName: yup
     .string()
     .trim()
@@ -129,3 +129,24 @@ export const ValidationUserInformationSchema = yup.object({
 //   line2: '',
 // },
 // _id: '',
+
+export const ValidationStudentInformationSchema = yup.object({
+  firstName: yup
+    .string()
+    .trim()
+    .required('First name is required')
+    .max(30, 'Are you really sure that your First Name is that big?'),
+  lastName: yup
+    .string()
+    .trim()
+    .required('Last name is required')
+    .max(30, 'Are you really sure that your Last Name is that big?'),
+  phoneNumber: yup
+    .string()
+    .matches(
+      /^[+][0-9]{12}$/,
+      'Номер телефона должен начинаться со знака + и содержать 12 цифр',
+    )
+    .required('Phone Number is required'),
+  gender: yup.string().required('This field is required'),
+});

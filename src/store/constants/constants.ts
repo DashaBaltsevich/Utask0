@@ -1,5 +1,2 @@
-export const ADMIN = 'ADMIN';
-export const SPECIALIST = 'SPECIALIST';
-export const STUDENT = 'STUDENT';
 export const SET_USER_INFORMATION = 'SET_USER_INFORMATION';
 export const SET_IS_AUTHORISED = 'SET_IS_AUTHORISED';

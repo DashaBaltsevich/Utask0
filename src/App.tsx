@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {
@@ -19,6 +19,7 @@ function App() {
     (state) => state.userInformationReducer.isAuthorised,
   );
   const dispatch = useDispatch();
+  const [isStudent, setIsStudent] = useState(false);
 
   useEffect(() => {
     if (!localStorage.getItem('accessToken')) {
@@ -37,14 +38,14 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<FirstScreen />} />
-      <Route path="login" element={<LoginForm />} />
+      <Route path="/" element={<FirstScreen setIsStudent={setIsStudent} />} />
+      <Route path="login" element={<LoginForm isStudent={isStudent} />} />
       <Route
         path="/userInformation"
         element={
           <PrivateRoute isAllowed={isAuthorised}>
             <Template>
-              <UserInformationForm />
+              <UserInformationForm isStudent={isStudent} />
             </Template>
           </PrivateRoute>
         }

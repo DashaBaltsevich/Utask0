@@ -1,10 +1,4 @@
-import {
-  ADMIN,
-  SPECIALIST,
-  STUDENT,
-  SET_USER_INFORMATION,
-  SET_IS_AUTHORISED,
-} from '../constants';
+import { SET_USER_INFORMATION, SET_IS_AUTHORISED } from '../constants';
 
 // interface EducationState {
 //   title: string;
@@ -51,13 +45,11 @@ import {
 
 interface UserInformationState {
   isAuthorised: boolean;
-  permission: number;
   userInformation: any;
 }
 
 const initialState: UserInformationState = {
   isAuthorised: false,
-  permission: 0,
   userInformation: {},
 };
 
@@ -71,21 +63,6 @@ export const userInformationReducer = (
   action: UserAction,
 ): UserInformationState => {
   switch (action.type) {
-    case ADMIN:
-      return {
-        ...state,
-        permission: 0,
-      };
-    case SPECIALIST:
-      return {
-        ...state,
-        permission: 1,
-      };
-    case STUDENT:
-      return {
-        ...state,
-        permission: 2,
-      };
     case SET_USER_INFORMATION:
       return {
         ...state,
