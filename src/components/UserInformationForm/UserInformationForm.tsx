@@ -13,11 +13,46 @@ import {
 } from '../ValidationSchema';
 import 'react-datepicker/dist/react-datepicker.css';
 
-// interface userDataArrayType {
+// interface EducationType {
+//   title: string;
+//   faculty: string;
+//   spec: string;
+//   yearStart: string;
+//   yearEnd: string;
+// }
+// interface workExperience {
+//   organization: string;
+//   position: string;
+//   yearStart: string;
+//   yearEnd: string;
+//   tillNow: boolean;
+// }
+// interface AddressType {
+//   city: string;
+//   street: string;
+//   line2: string;
+// }
+
+// interface ValuesStudentType {
+//   firstName: string;
+//   lastName: string;
+//   gender: string;
+//   birthDate: string;
+//   phoneNumber: string;
+// }
+
+// interface ValuesSpecType {
+//   firstName: string;
+//   lastName: string;
+//   gender: string;
+//   birthDate: string;
+//   phoneNumber: string;
+//   education: EducationType;
+//   workExperience: workExperience;
+//   address: AddressType;
 //   about: string;
-//   textEducation: string;
-//   textExpirience: string;
-//   textAddress: string;
+//   skills: Array<string>;
+//   сlassesFormat: Array<string>;
 // }
 
 export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
@@ -93,32 +128,27 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
   const birthDate = `${startDate.getDate()}.${
     startDate.getMonth() + 1
   }.${startDate.getFullYear()}`;
-  const currentYear =
-    !isStudent && userInformation?.workExperience.tillNow
-      ? new Date().getFullYear()
-      : 0;
+  const currentYear = userInformation?.workExperience.tillNow
+    ? new Date().getFullYear()
+    : 0;
 
   const handleFormSubmit = async (values: any) => {
     setIsEditFormOpen(false);
 
-    let userDataArray;
+    const userDataArray = isStudent
+      ? {
+          ...values,
+          birthDate: `${startDate}`,
+        }
+      : {
+          ...values,
+          birthDate: `${startDate}`,
+          workExperience: {
+            ...values.workExperience,
+            yearEnd: `${currentYear}`,
+          },
+        };
 
-    if (!isStudent) {
-      userDataArray = {
-        ...values,
-        birthDate: `${startDate}`,
-        workExperience: {
-          ...values.workExperience,
-          yearEnd: `${currentYear}`,
-        },
-      };
-    } else {
-      userDataArray = {
-        ...values,
-        birthDate: `${startDate}`,
-      };
-    }
-    console.log(values);
     try {
       const data = await updateUserInformation(userDataArray);
       dispatch(setUserInformation(data?.content));
@@ -131,40 +161,18 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
     <section className="s-user-info">
       <h2 className="s-user-info__title">Анкета</h2>
       {isEditFormOpen ? (
-        !isStudent ? (
+        isStudent ? (
           <Formik
             initialValues={{
-              education: {
-                title: '',
-                faculty: '',
-                spec: '',
-                yearStart: '',
-                yearEnd: '',
-              },
-              workExperience: {
-                organization: '',
-                position: '',
-                yearStart: '',
-                yearEnd: '',
-                tillNow: false,
-              },
-              address: {
-                city: '',
-                street: '',
-                line2: '',
-              },
               firstName: '',
               lastName: '',
-              about: '',
               gender: '',
               birthDate: '',
               phoneNumber: '',
-              skills: [],
-              сlassesFormat: [],
             }}
             validateOnBlur={false}
-            validationSchema={ValidationSpecInformationSchema}
-            onSubmit={(values: any) => handleFormSubmit(values)}
+            validationSchema={ValidationStudentInformationSchema}
+            onSubmit={(values) => handleFormSubmit(values)}
           >
             {({ values }) => (
               <Form className="f-user-info">
@@ -185,7 +193,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   />
                   <ErrorMessage
                     name="firstName"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -207,7 +215,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   />
                   <ErrorMessage
                     name="lastName"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -234,7 +242,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   </Field>
                   <ErrorMessage
                     name="gender"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -276,7 +284,172 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   />
                   <ErrorMessage
                     name="phoneNumber"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
+                      <p className="f-user-info__field-error">{children}</p>
+                    )}
+                  />
+                </div>
+
+                <div className="f-user-info__btn-wrapper">
+                  <button type="submit" className="f-user-info__btn">
+                    Сохранить
+                  </button>
+                  <button
+                    className="f-user-info__btn"
+                    onClick={() => setIsEditFormOpen(false)}
+                  >
+                    Назад
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        ) : (
+          <Formik
+            initialValues={{
+              education: {
+                title: '',
+                faculty: '',
+                spec: '',
+                yearStart: '',
+                yearEnd: '',
+              },
+              workExperience: {
+                organization: '',
+                position: '',
+                yearStart: '',
+                yearEnd: '',
+                tillNow: false,
+              },
+              address: {
+                city: '',
+                street: '',
+                line2: '',
+              },
+              firstName: '',
+              lastName: '',
+              about: '',
+              gender: '',
+              birthDate: '',
+              phoneNumber: '',
+              skills: [],
+              сlassesFormat: [],
+            }}
+            validateOnBlur={false}
+            validationSchema={ValidationSpecInformationSchema}
+            onSubmit={(values) => handleFormSubmit(values)}
+          >
+            {({ values }) => (
+              <Form className="f-user-info">
+                <div className="f-user-info__row">
+                  <label
+                    htmlFor="firstName"
+                    className="f-user-info__field-label-bold"
+                  >
+                    Имя <span className="l-user-info__title_span">*</span>:
+                  </label>
+                  <br />
+                  <Field
+                    component="input"
+                    id="firstName"
+                    name="firstName"
+                    className="f-user-info__field"
+                    value={values.firstName}
+                  />
+                  <ErrorMessage
+                    name="firstName"
+                    component={({ children }: { children?: string }) => (
+                      <p className="f-user-info__field-error">{children}</p>
+                    )}
+                  />
+                </div>
+                <div className="f-user-info__row">
+                  <label
+                    htmlFor="lastName"
+                    className="f-user-info__field-label-bold"
+                  >
+                    Фамилия <span className="l-user-info__title_span">*</span>:
+                  </label>
+                  <br />
+                  <Field
+                    component="input"
+                    id="lastName"
+                    name="lastName"
+                    className="f-user-info__field"
+                    value={values.lastName}
+                  />
+                  <ErrorMessage
+                    name="lastName"
+                    component={({ children }: { children?: string }) => (
+                      <p className="f-user-info__field-error">{children}</p>
+                    )}
+                  />
+                </div>
+                <div className="f-user-info__row">
+                  <label
+                    htmlFor="gender"
+                    className="f-user-info__field-label-bold"
+                  >
+                    Пол <span className="l-user-info__title_span">*</span>:
+                  </label>
+                  <br />
+                  <Field
+                    component="select"
+                    id="gender"
+                    name="gender"
+                    className="f-user-info__field"
+                    value={values.gender}
+                  >
+                    <option value="" label="Выберите"></option>
+                    <option value="0">ж</option>
+                    <option value="1">м</option>
+                    <option value="2">др.</option>
+                  </Field>
+                  <ErrorMessage
+                    name="gender"
+                    component={({ children }: { children?: string }) => (
+                      <p className="f-user-info__field-error">{children}</p>
+                    )}
+                  />
+                </div>
+                <div className="f-user-info__row">
+                  <label
+                    htmlFor="birthDate"
+                    className="f-user-info__field-label-bold"
+                  >
+                    Дата Рождения{' '}
+                    <span className="l-user-info__title_span">*</span>:
+                  </label>
+                  <br />
+                  <DatePicker
+                    selected={startDate}
+                    onChange={(date: Date) => setStartDate(date)}
+                    showYearDropdown
+                    dateFormatCalendar="MMMM"
+                    yearDropdownItemNumber={70}
+                    scrollableYearDropdown
+                    className="f-user-info__field"
+                  />
+                </div>
+                <div className="f-user-info__row">
+                  <label
+                    htmlFor="phoneNumber"
+                    className="f-user-info__field-label-bold"
+                  >
+                    Номер телефона{' '}
+                    <span className="l-user-info__title_span">*</span>:
+                  </label>
+                  <br />
+                  <Field
+                    component="input"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    className="f-user-info__field"
+                    value={values.phoneNumber}
+                  />
+                  <ErrorMessage
+                    name="phoneNumber"
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -298,7 +471,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   />
                   <ErrorMessage
                     name="about"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -322,7 +495,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   />
                   <ErrorMessage
                     name="education.title"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -341,7 +514,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   />
                   <ErrorMessage
                     name="education.faculty"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -361,7 +534,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   />
                   <ErrorMessage
                     name="education.spec"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -384,7 +557,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                       />
                       <ErrorMessage
                         name="education.yearStart"
-                        component={({ children }: any) => (
+                        component={({ children }: { children?: string }) => (
                           <p className="f-user-info__field-error number">
                             {children}
                           </p>
@@ -409,7 +582,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                       />
                       <ErrorMessage
                         name="education.yearEnd"
-                        component={({ children }: any) => (
+                        component={({ children }: { children?: string }) => (
                           <p className="f-user-info__field-error number">
                             {children}
                           </p>
@@ -438,7 +611,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   />
                   <ErrorMessage
                     name="workExperience.organization"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -458,7 +631,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   />
                   <ErrorMessage
                     name="workExperience.position"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -481,7 +654,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                       />
                       <ErrorMessage
                         name="workExperience.yearStart"
-                        component={({ children }: any) => (
+                        component={({ children }: { children?: string }) => (
                           <p className="f-user-info__field-error number">
                             {children}
                           </p>
@@ -506,7 +679,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                       />
                       <ErrorMessage
                         name="workExperience.yearEnd"
-                        component={({ children }: any) => (
+                        component={({ children }: { children?: string }) => (
                           <p className="f-user-info__field-error number">
                             {children}
                           </p>
@@ -546,7 +719,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   />
                   <ErrorMessage
                     name="address.city"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -567,7 +740,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   />
                   <ErrorMessage
                     name="address.street"
-                    component={({ children }: any) => (
+                    component={({ children }: { children?: string }) => (
                       <p className="f-user-info__field-error">{children}</p>
                     )}
                   />
@@ -590,7 +763,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                       />
                       <ErrorMessage
                         name="address.line2"
-                        component={({ children }: any) => (
+                        component={({ children }: { children?: string }) => (
                           <p className="f-user-info__field-error">{children}</p>
                         )}
                       />
@@ -886,149 +1059,6 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                     Не важно
                   </label>
                   <br />
-                </div>
-
-                <div className="f-user-info__btn-wrapper">
-                  <button type="submit" className="f-user-info__btn">
-                    Сохранить
-                  </button>
-                  <button
-                    className="f-user-info__btn"
-                    onClick={() => setIsEditFormOpen(false)}
-                  >
-                    Назад
-                  </button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        ) : (
-          <Formik
-            initialValues={{
-              firstName: '',
-              lastName: '',
-              gender: '',
-              birthDate: '',
-              phoneNumber: '',
-            }}
-            validateOnBlur={false}
-            validationSchema={ValidationStudentInformationSchema}
-            onSubmit={(values: any) => handleFormSubmit(values)}
-          >
-            {({ values }) => (
-              <Form className="f-user-info">
-                <div className="f-user-info__row">
-                  <label
-                    htmlFor="firstName"
-                    className="f-user-info__field-label-bold"
-                  >
-                    Имя <span className="l-user-info__title_span">*</span>:
-                  </label>
-                  <br />
-                  <Field
-                    component="input"
-                    id="firstName"
-                    name="firstName"
-                    className="f-user-info__field"
-                    value={values.firstName}
-                  />
-                  <ErrorMessage
-                    name="firstName"
-                    component={({ children }: any) => (
-                      <p className="f-user-info__field-error">{children}</p>
-                    )}
-                  />
-                </div>
-                <div className="f-user-info__row">
-                  <label
-                    htmlFor="lastName"
-                    className="f-user-info__field-label-bold"
-                  >
-                    Фамилия <span className="l-user-info__title_span">*</span>:
-                  </label>
-                  <br />
-                  <Field
-                    component="input"
-                    id="lastName"
-                    name="lastName"
-                    className="f-user-info__field"
-                    value={values.lastName}
-                  />
-                  <ErrorMessage
-                    name="lastName"
-                    component={({ children }: any) => (
-                      <p className="f-user-info__field-error">{children}</p>
-                    )}
-                  />
-                </div>
-                <div className="f-user-info__row">
-                  <label
-                    htmlFor="gender"
-                    className="f-user-info__field-label-bold"
-                  >
-                    Пол <span className="l-user-info__title_span">*</span>:
-                  </label>
-                  <br />
-                  <Field
-                    component="select"
-                    id="gender"
-                    name="gender"
-                    className="f-user-info__field"
-                    value={values.gender}
-                  >
-                    <option value="" label="Выберите"></option>
-                    <option value="0">ж</option>
-                    <option value="1">м</option>
-                    <option value="2">др.</option>
-                  </Field>
-                  <ErrorMessage
-                    name="gender"
-                    component={({ children }: any) => (
-                      <p className="f-user-info__field-error">{children}</p>
-                    )}
-                  />
-                </div>
-                <div className="f-user-info__row">
-                  <label
-                    htmlFor="birthDate"
-                    className="f-user-info__field-label-bold"
-                  >
-                    Дата Рождения{' '}
-                    <span className="l-user-info__title_span">*</span>:
-                  </label>
-                  <br />
-                  <DatePicker
-                    selected={startDate}
-                    onChange={(date: Date) => setStartDate(date)}
-                    showYearDropdown
-                    dateFormatCalendar="MMMM"
-                    yearDropdownItemNumber={70}
-                    scrollableYearDropdown
-                    className="f-user-info__field"
-                  />
-                </div>
-                <div className="f-user-info__row">
-                  <label
-                    htmlFor="phoneNumber"
-                    className="f-user-info__field-label-bold"
-                  >
-                    Номер телефона{' '}
-                    <span className="l-user-info__title_span">*</span>:
-                  </label>
-                  <br />
-                  <Field
-                    component="input"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    className="f-user-info__field"
-                    value={values.phoneNumber}
-                  />
-                  <ErrorMessage
-                    name="phoneNumber"
-                    component={({ children }: any) => (
-                      <p className="f-user-info__field-error">{children}</p>
-                    )}
-                  />
                 </div>
 
                 <div className="f-user-info__btn-wrapper">
