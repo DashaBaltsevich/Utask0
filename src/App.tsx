@@ -10,8 +10,12 @@ import {
   UserInformationForm,
 } from './components';
 import { useTypedSelector } from './hooks/useTypedSelector';
-import { getUserInformation } from './api/facades';
-import { setUserInformation, setIsAuthorised } from './store/actions';
+import { getUserInformation, getOrders } from './api/facades';
+import {
+  setUserInformation,
+  setIsAuthorised,
+  setOrders,
+} from './store/actions';
 import './App.css';
 
 function App() {
@@ -30,6 +34,14 @@ function App() {
         const data = await getUserInformation();
         dispatch(setUserInformation(data?.content));
         dispatch(setIsAuthorised(true));
+      } catch (err) {
+        console.dir(err);
+      }
+
+      try {
+        const data = await getOrders();
+        dispatch(setOrders(data?.content));
+        console.log(data);
       } catch (err) {
         console.dir(err);
       }

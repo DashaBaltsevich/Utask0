@@ -1,4 +1,8 @@
-import { SET_USER_INFORMATION, SET_IS_AUTHORISED } from '../constants';
+import {
+  SET_USER_INFORMATION,
+  SET_IS_AUTHORISED,
+  SET_ORDERS,
+} from '../constants';
 
 // interface EducationState {
 //   title: string;
@@ -46,11 +50,13 @@ import { SET_USER_INFORMATION, SET_IS_AUTHORISED } from '../constants';
 interface UserInformationState {
   isAuthorised: boolean;
   userInformation: any;
+  orders: any;
 }
 
 const initialState: UserInformationState = {
   isAuthorised: false,
   userInformation: {},
+  orders: {},
 };
 
 interface UserAction {
@@ -72,6 +78,11 @@ export const userInformationReducer = (
       return {
         ...state,
         isAuthorised: true,
+      };
+    case SET_ORDERS:
+      return {
+        ...state,
+        orders: action.payload,
       };
     default:
       return state;
