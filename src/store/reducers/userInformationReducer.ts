@@ -56,7 +56,7 @@ interface UserInformationState {
 const initialState: UserInformationState = {
   isAuthorised: false,
   userInformation: {},
-  orders: {},
+  orders: [],
 };
 
 interface UserAction {

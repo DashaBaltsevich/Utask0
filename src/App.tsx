@@ -22,6 +22,9 @@ function App() {
   const isAuthorised: boolean = useTypedSelector(
     (state) => state.userInformationReducer.isAuthorised,
   );
+  const orders: object = useTypedSelector(
+    (state) => state.userInformationReducer.orders,
+  );
   const dispatch = useDispatch();
   const [isStudent, setIsStudent] = useState(false);
 
@@ -34,10 +37,15 @@ function App() {
         const data = await getUserInformation();
         dispatch(setUserInformation(data?.content));
         dispatch(setIsAuthorised(true));
+        console.log(data);
       } catch (err) {
         console.dir(err);
       }
+    })();
+  }, []);
 
+  useEffect(() => {
+    (async () => {
       try {
         const data = await getOrders();
         dispatch(setOrders(data?.content));
@@ -46,7 +54,7 @@ function App() {
         console.dir(err);
       }
     })();
-  }, []);
+  }, [orders]);
 
   return (
     <Routes>

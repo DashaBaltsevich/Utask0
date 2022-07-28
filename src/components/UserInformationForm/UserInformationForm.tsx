@@ -1057,7 +1057,6 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                     />
                     Не важно
                   </label>
-                  <br />
                 </div>
 
                 <div className="f-user-info__btn-wrapper">
