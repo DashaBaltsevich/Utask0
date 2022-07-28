@@ -26,7 +26,10 @@ httpClient.interceptors.request.use((config: any) => {
   const url = config.url;
   if (
     (method === 'get' && url === 'user') ||
-    (method === 'patch' && url === 'user')
+    (method === 'patch' && url === 'user') ||
+    (method === 'get' && url === 'orders') ||
+    (method === 'post' && url === 'orders') ||
+    method === 'delete'
   ) {
     config.headers.common.Authorization = `Bearer ${localStorage.getItem(
       'accessToken',

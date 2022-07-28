@@ -74,7 +74,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
 
   const skills =
     !isStudent &&
-    userInformation?.skills.map((item: string) => {
+    userInformation?.skills?.map((item: string) => {
       item =
         item === 'english'
           ? 'Английский'
@@ -114,7 +114,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
 
   const сlassesFormat: Array<string> =
     !isStudent &&
-    userInformation?.сlassesFormat.map((item: string) => {
+    userInformation?.сlassesFormat?.map((item: string) => {
       item =
         item === 'remotely'
           ? 'Удаленно'
@@ -128,7 +128,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
   const birthDate = `${startDate.getDate()}.${
     startDate.getMonth() + 1
   }.${startDate.getFullYear()}`;
-  const currentYear = userInformation?.workExperience.tillNow
+  const currentYear = userInformation?.workExperience?.tillNow
     ? new Date().getFullYear()
     : 0;
 
@@ -570,7 +570,6 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                         className="f-user-info__field-label-light"
                       >
                         Год окончания{' '}
-                        <span className="l-user-info__title_span">*</span>:
                       </label>
                       <br />
                       <Field
@@ -1058,7 +1057,6 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                     />
                     Не важно
                   </label>
-                  <br />
                 </div>
 
                 <div className="f-user-info__btn-wrapper">
