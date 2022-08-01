@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {
   FirstScreen,
@@ -13,7 +13,7 @@ import { useTypedSelector } from './hooks/useTypedSelector';
 import { getUserInformation, getOrders } from './api/facades';
 import {
   setUserInformation,
-  setIsAuthorised,
+  setAuthorisationState,
   setOrders,
 } from './store/actions';
 import './App.css';
@@ -22,10 +22,11 @@ function App() {
   const isAuthorised: boolean = useTypedSelector(
     (state) => state.userInformationReducer.isAuthorised,
   );
-  const orders: object = useTypedSelector(
-    (state) => state.userInformationReducer.orders,
-  );
+  // const orders: object = useTypedSelector(
+  //   (state) => state.userInformationReducer.orders,
+  // );
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isStudent, setIsStudent] = useState(false);
 
   useEffect(() => {
@@ -36,25 +37,23 @@ function App() {
       try {
         const data = await getUserInformation();
         dispatch(setUserInformation(data?.content));
-        dispatch(setIsAuthorised(true));
+        dispatch(setAuthorisationState(true));
+        console.log(data);
+      } catch (err) {
+        console.dir(err);
+      }
+    })();
+    (async () => {
+      try {
+        const data = await getOrders();
+        dispatch(setOrders(data?.content));
+        navigate('../orders');
         console.log(data);
       } catch (err) {
         console.dir(err);
       }
     })();
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await getOrders();
-        dispatch(setOrders(data?.content));
-        console.log(data);
-      } catch (err) {
-        console.dir(err);
-      }
-    })();
-  }, [orders]);
 
   return (
     <Routes>

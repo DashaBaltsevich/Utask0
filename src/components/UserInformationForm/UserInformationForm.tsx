@@ -12,48 +12,7 @@ import {
   ValidationStudentInformationSchema,
 } from '../ValidationSchema';
 import 'react-datepicker/dist/react-datepicker.css';
-
-// interface EducationType {
-//   title: string;
-//   faculty: string;
-//   spec: string;
-//   yearStart: string;
-//   yearEnd: string;
-// }
-// interface workExperience {
-//   organization: string;
-//   position: string;
-//   yearStart: string;
-//   yearEnd: string;
-//   tillNow: boolean;
-// }
-// interface AddressType {
-//   city: string;
-//   street: string;
-//   line2: string;
-// }
-
-// interface ValuesStudentType {
-//   firstName: string;
-//   lastName: string;
-//   gender: string;
-//   birthDate: string;
-//   phoneNumber: string;
-// }
-
-// interface ValuesSpecType {
-//   firstName: string;
-//   lastName: string;
-//   gender: string;
-//   birthDate: string;
-//   phoneNumber: string;
-//   education: EducationType;
-//   workExperience: workExperience;
-//   address: AddressType;
-//   about: string;
-//   skills: Array<string>;
-//   сlassesFormat: Array<string>;
-// }
+import { UserSubmitValuesTypes } from '../../types';
 
 export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
@@ -112,7 +71,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
       return item;
     });
 
-  const сlassesFormat: Array<string> =
+  const сlassesFormat =
     !isStudent &&
     userInformation?.сlassesFormat?.map((item: string) => {
       item =
@@ -132,25 +91,27 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
     ? new Date().getFullYear()
     : 0;
 
-  const handleFormSubmit = async (values: any) => {
+  const handleFormSubmit = async (values: UserSubmitValuesTypes) => {
     setIsEditFormOpen(false);
 
-    const userDataArray = isStudent
-      ? {
-          ...values,
-          birthDate: `${startDate}`,
-        }
-      : {
-          ...values,
-          birthDate: `${startDate}`,
-          workExperience: {
-            ...values.workExperience,
-            yearEnd: `${currentYear}`,
-          },
-        };
+    const userDataArray =
+      userInformation?.permission === 2
+        ? {
+            ...values,
+            birthDate: `${startDate}`,
+          }
+        : {
+            ...values,
+            birthDate: `${startDate}`,
+            workExperience: {
+              ...values.workExperience,
+              yearEnd: `${currentYear}`,
+            },
+          };
 
     try {
       const data = await updateUserInformation(userDataArray);
+      console.log(data);
       dispatch(setUserInformation(data?.content));
     } catch (err) {
       console.log(err);
@@ -161,7 +122,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
     <section className="s-user-info">
       <h2 className="s-user-info__title">Анкета</h2>
       {isEditFormOpen ? (
-        isStudent ? (
+        userInformation?.permission === 2 ? (
           <Formik
             initialValues={{
               firstName: '',
@@ -1106,7 +1067,7 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                 {userInformation?.phoneNumber}
               </p>
             </li>
-            {!isStudent && (
+            {userInformation?.permission === 1 && (
               <>
                 <li className="l-user-info__item">
                   <h3 className="l-user-info__title">О себе</h3>
@@ -1116,14 +1077,14 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   <h3 className="l-user-info__title">Образование</h3>
                   <div className="l-user-info__text-wrapper">
                     <p className="l-user-info__text">
-                      Учебное заведение: {userInformation?.education.title}
+                      Учебное заведение: {userInformation?.education?.title}
                     </p>
                     <p className="l-user-info__text">
-                      Факультет: {userInformation?.education.faculty}
+                      Факультет: {userInformation?.education?.faculty}
                     </p>
                     <p className="l-user-info__text">
-                      {userInformation?.education.yearStart} -{' '}
-                      {userInformation?.education.yearEnd}
+                      {userInformation?.education?.yearStart} -{' '}
+                      {userInformation?.education?.yearEnd}
                     </p>
                   </div>
                 </li>
@@ -1132,14 +1093,14 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   <div className="l-user-info__text-wrapper">
                     <p className="l-user-info__text">
                       Организация:{' '}
-                      {userInformation?.workExperience.organization}
+                      {userInformation?.workExperience?.organization}
                     </p>
                     <p className="l-user-info__text">
-                      Должность: {userInformation?.workExperience.position}
+                      Должность: {userInformation?.workExperience?.position}
                     </p>
                     <p className="l-user-info__text">
-                      {userInformation?.workExperience.yearStart} -{' '}
-                      {userInformation?.workExperience.yearEnd}
+                      {userInformation?.workExperience?.yearStart} -{' '}
+                      {userInformation?.workExperience?.yearEnd}
                     </p>
                   </div>
                 </li>
@@ -1147,11 +1108,11 @@ export const UserInformationForm = ({ isStudent }: { isStudent?: boolean }) => {
                   <h3 className="l-user-info__title">Адрес</h3>
                   <div className="l-user-info__text-wrapper">
                     <p className="l-user-info__text">
-                      Город: {userInformation?.address.city}
+                      Город: {userInformation?.address?.city}
                     </p>
                     <p className="l-user-info__text">
-                      Улица: {userInformation?.address.street},{' '}
-                      {userInformation?.address.line2}
+                      Улица: {userInformation?.address?.street},{' '}
+                      {userInformation?.address?.line2}
                     </p>
                   </div>
                 </li>

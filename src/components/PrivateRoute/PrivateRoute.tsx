@@ -7,9 +7,5 @@ interface ProtectedRouteProps {
 }
 
 export const PrivateRoute = ({ isAllowed, children }: ProtectedRouteProps) => {
-  if (isAllowed) {
-    return children;
-  } else {
-    return <Navigate to="/login" replace={true} />;
-  }
+  return isAllowed ? children : <Navigate to="/" />;
 };

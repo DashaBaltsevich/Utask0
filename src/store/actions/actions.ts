@@ -1,30 +1,34 @@
 import {
   SET_USER_INFORMATION,
-  SET_IS_AUTHORISED,
+  SET_AUTHORISATION_STATE,
   SET_ORDERS,
 } from '../constants';
 
-export const setUserPermission = (permission: string) => {
-  return {
-    type: permission,
-  };
-};
+import {
+  UserInformationTypes,
+  TaskActionTypes,
+  OrdersTypes,
+} from '../../types';
 
-export const setUserInformation = (information: object) => {
+export const setUserInformation = (
+  information: UserInformationTypes,
+): TaskActionTypes => {
   return {
     type: SET_USER_INFORMATION,
     payload: information,
   };
 };
 
-export const setIsAuthorised = (isAuthorised: boolean) => {
+export const setAuthorisationState = (
+  isAuthorised: boolean,
+): TaskActionTypes => {
   return {
-    type: SET_IS_AUTHORISED,
+    type: SET_AUTHORISATION_STATE,
     payload: isAuthorised,
   };
 };
 
-export const setOrders = (orders: object) => {
+export const setOrders = (orders: OrdersTypes): TaskActionTypes => {
   return {
     type: SET_ORDERS,
     payload: orders,

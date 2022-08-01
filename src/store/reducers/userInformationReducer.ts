@@ -1,85 +1,58 @@
 import {
   SET_USER_INFORMATION,
-  SET_IS_AUTHORISED,
+  SET_AUTHORISATION_STATE,
   SET_ORDERS,
 } from '../constants';
 
-// interface EducationState {
-//   title: string;
-//   faculty: string;
-//   spec: string;
-//   yearStart: number;
-//   yearEnd: number;
-//   tillNow: boolean;
-// }
+import {
+  UserInformationTypes,
+  OrdersTypes,
+  TaskActionTypes,
+} from '../../types';
 
-// interface WorkExperienceState {
-//   organization: string;
-//   position: string;
-//   yearStart: number;
-//   yearEnd: number;
-//   tillNow: boolean;
-// }
-
-// interface AdressState {
-//   city: string;
-//   street: string;
-//   line2: string;
-// }
-
-// interface UserInformationObjectState {
-//   education: EducationState;
-//   workExperience: WorkExperienceState;
-//   address: AdressState;
-//   _id: string;
-//   firstName: string;
-//   lastName: string;
-//   gender: null;
-//   email: string;
-//   photo: string;
-//   birthDate: null;
-//   phoneNumber: number;
-//   skills: Array<string>;
-//   сlassesFormat: Array<string>;
-//   about: string;
-//   ordersIds: Array<string>;
-//   permission: number;
-//   date_created: string;
-// }
-
-interface UserInformationState {
+interface initialStateType {
   isAuthorised: boolean;
-  userInformation: any;
-  orders: any;
+  userInformation: UserInformationTypes;
+  orders: OrdersTypes;
 }
 
-const initialState: UserInformationState = {
+const initialState: initialStateType = {
   isAuthorised: false,
-  userInformation: {},
+  userInformation: {
+    _id: '',
+    firstName: '',
+    lastName: '',
+    gender: 0,
+    email: '',
+    photo: '',
+    birthDate: '',
+    phoneNumber: '',
+    ordersIds: [],
+    permission: 0,
+    date_created: '',
+  },
   orders: [],
 };
 
-interface UserAction {
-  type: string;
-  payload: object;
-}
-
 export const userInformationReducer = (
   state = initialState,
-  action: UserAction,
-): UserInformationState => {
+  action: TaskActionTypes,
+): initialStateType => {
   switch (action.type) {
     case SET_USER_INFORMATION:
+      console.log(action.payload);
       return {
         ...state,
         userInformation: action.payload,
       };
-    case SET_IS_AUTHORISED:
+    case SET_AUTHORISATION_STATE:
+      console.log(action.payload);
       return {
         ...state,
-        isAuthorised: true,
+        isAuthorised: action.payload,
       };
     case SET_ORDERS:
+      console.log(action.payload);
       return {
         ...state,
         orders: action.payload,

@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import './LoginForm.scss';
 import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
-import { setUserInformation, setIsAuthorised } from '../../store/actions';
+import { setUserInformation, setAuthorisationState } from '../../store/actions';
 import { login } from '../../api/facades';
 
 const validationSchema = yup.object({
@@ -27,9 +27,9 @@ export const LoginForm = ({ isStudent }: { isStudent: boolean }) => {
     try {
       const data = await login(values);
       dispatch(setUserInformation(data?.content.user));
-      dispatch(setIsAuthorised(true));
+      dispatch(setAuthorisationState(true));
 
-      navigate('../orders', { replace: true });
+      navigate('../orders');
       localStorage.setItem('accessToken', data?.content.token.accessToken);
       localStorage.setItem('refreshToken', data?.content.token.refreshToken);
     } catch (err) {
